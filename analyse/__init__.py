@@ -3,4 +3,4 @@ class PassiveAnalyser:
         self.output_feedback = output_feedback
 
     def analyse_package(self, package):
-        self.output_feedback(package)
+        self.output_feedback(str(package))
