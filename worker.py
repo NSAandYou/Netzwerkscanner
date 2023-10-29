@@ -1,4 +1,3 @@
-import multiprocessing
 import threading
 
 import pyshark
@@ -17,24 +16,35 @@ class Worker:
         self.passive_working_state = False
 
     def start(self):
-        ##self.start_passive()
+        # Starts the GUI, Background processes and program in general
+
         self.run_gui()
         self.stop()
 
     def run_gui(self):
+        # Opens GUI
+
         self.window.open()
 
     def stop(self):
+        # stops background processes and program
+
         self.stop_passive()
 
     def start_passive(self):
+        # starts passive scan in new thread
+
         self.passive_working_state = True
         threading.Thread(target=self.passive_worker).start()
 
     def stop_passive(self):
+        # stops passive scan thread (sets flag so shutdown takes time)
+
         self.passive_working_state = False
 
     def passive_worker(self):
+        # function for passive scan loop
+
         for packet in self.passive_scanner.sniff_continuously():
             if not self.passive_working_state:
                 break

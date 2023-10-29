@@ -1,3 +1,4 @@
+import sys
 from worker import Worker
 
 
@@ -31,3 +32,9 @@ def print_help():
     print("""Welcome to this help dialog! Please use it as follows:
     -i NETWORK_INTERFACE, set the network interface witch should be used for passive scans
     -h, prints this help dialog""")
+
+
+if __name__ == '__main__':
+    worker = run(sys.argv)
+    if worker is not None:
+        worker.start()

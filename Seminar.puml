@@ -1,0 +1,22 @@
+@startuml uml
+package seminar {
+    !include ./analyse/Analyse.puml
+    !include ./gui/Gui.puml
+    !include ./Worker.puml
+
+
+
+    Worker --> Window
+    Worker --> PassiveAnalyser
+    Window --> Worker
+}
+@enduml
+@startuml
+    User -> Start: Start Program
+    Start -> Start: CMD interpretation
+    Start -> Worker: Create
+    Start -> Worker: Start
+    Worker -> Window: Start
+
+    User -> Worker: End
+@enduml

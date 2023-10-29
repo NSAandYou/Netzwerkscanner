@@ -1,0 +1,19 @@
+@startuml gui
+package gui {
+    class Window {
+        + worker: Worker
+        + event_queue: queue.Queue
+        + root: tk.Tk
+        + passive_output: tk.Text
+        + passive_power_button: tk.Button
+        --
+        + __init__(worker)
+        + setup_layout(): void
+        + passive_power_button_pressed(): void
+        + refresh(): void
+        + print(text: string): void
+        + open(): void
+        + close(): void
+    }
+}
+@enduml

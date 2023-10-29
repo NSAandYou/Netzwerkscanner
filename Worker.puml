@@ -1,0 +1,17 @@
+@startuml
+class Worker {
+    + window: Window
+    + network_interface: string
+    + passive_scanner: pyshark.LiveCapture
+    + passive_analyser: analyse.PassiveAnalyser
+    + passive_working_state: bool
+--
+    + __init__(network_interface: string)
+    + start(): void
+    + run_gui(): void
+    + stop(): void
+    + start_passive(): void
+    + stop_passive(): void
+    + passive_worker(): void
+}
+@enduml

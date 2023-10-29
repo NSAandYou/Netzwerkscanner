@@ -1,0 +1,9 @@
+@startuml analyse
+package analyse {
+    class PassiveAnalyser {
+        --
+        + __init__(output_feedback: function(string))
+        + analyse_package(package: Package): void
+    }
+}
+@enduml
