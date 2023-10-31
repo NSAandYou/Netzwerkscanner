@@ -3,16 +3,19 @@ import threading
 import pyshark
 
 from analyse import PassiveAnalyser
-from gui import Window
+from analyse.network import Structure
+from gui import MainWindow
 
 
 class Worker:
     def __init__(self, network_interface):
-        self.window = Window(self)
+        self.window = MainWindow(self)
 
         self.network_interface = network_interface
-        self.passive_scanner = pyshark.LiveCapture(interface=network_interface)
-        self.passive_analyser = PassiveAnalyser(self.window.print)
+        self.network_structure = Structure()
+
+        self.passive_scanner = pyshark.LiveCapture(interface=network_interface) ##TODO UnknownInterfaceException
+        self.passive_analyser = PassiveAnalyser(self.network_structure, self.window.passive_print, self.window.structure_print)
         self.passive_working_state = False
 
     def start(self):

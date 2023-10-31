@@ -6,9 +6,12 @@ package seminar {
 
 
 
-    Worker --> Window
+    Worker --> MainWindow
     Worker --> PassiveAnalyser
-    Window --> Worker
+    Worker --> analyse.network.Structure
+    MainWindow --> Worker
+    PassiveAnalyser -|> Worker
+
 }
 @enduml
 @startuml
@@ -16,7 +19,7 @@ package seminar {
     Start -> Start: CMD interpretation
     Start -> Worker: Create
     Start -> Worker: Start
-    Worker -> Window: Start
+    Worker -> MainWindow: Start
 
     User -> Worker: End
 @enduml

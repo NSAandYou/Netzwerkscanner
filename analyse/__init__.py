@@ -1,8 +1,13 @@
 class PassiveAnalyser:
-    def __init__(self, output_feedback):
-        self.output_feedback = output_feedback
+    def __init__(self, network_structure, output_passive, output_structure):
+        self.output_passive = output_passive
+        self.output_structure = output_structure
+        self.network_structure = network_structure
 
-    def analyse_package(self, package):
+    def analyse_package(self, pkg):
         # Analysing packages and generating output based on the results
 
-        self.output_feedback(str(package))
+        self.network_structure.analyse_pkg(pkg)
+
+        self.output_passive(str(pkg))
+        self.output_structure(self.network_structure.tostring())

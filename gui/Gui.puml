@@ -1,9 +1,9 @@
 @startuml gui
 package gui {
-    class Window {
+    class MainWindow {
         + worker: Worker
         + event_queue: queue.Queue
-        + root: tk.Tk
+        + window_structure = Structure
         + passive_output: tk.Text
         + passive_power_button: tk.Button
         --
@@ -11,9 +11,19 @@ package gui {
         + setup_layout(): void
         + passive_power_button_pressed(): void
         + refresh(): void
-        + print(text: string): void
+        + passive_print(string: string): void
+        + structure_print(string: string): void
         + open(): void
         + close(): void
     }
+
+    class Structure {
+        + passive_structure: tk.Text
+        --
+        + __init__(main_window: MainWindow)
+        + set(string: string): void
+    }
+
+    MainWindow --> Structure
 }
 @enduml

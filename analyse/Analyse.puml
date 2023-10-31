@@ -2,8 +2,33 @@
 package analyse {
     class PassiveAnalyser {
         --
-        + __init__(output_feedback: function(string))
-        + analyse_package(package: Package): void
+        + __init__(network_structure: Structure, output_passive: function(string), output_structure: function(string))
+        + analyse_package(pkg: Package): void
     }
+
+    package network {
+        class Device {
+            - _mac_addr: string
+            + pkg_recv: int
+            + pkg_send: int
+            --
+            + __init__(mac_addr: string)
+            + get_mac_addr(): string
+            + increase_pkg_recv(): void
+            + increase_pkg_send(): void
+            + get_pkg_processed(): int
+            + tostring(): string
+        }
+        class Structure {
+            + devices
+            --
+            + __init__()
+            + analyse_pkg(pkg: Package): void
+            + tostring(): string
+        }
+    }
+
+    Structure --> Device
+    PassiveAnalyser -|> Structure
 }
 @enduml

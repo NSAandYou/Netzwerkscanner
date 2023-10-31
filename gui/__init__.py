@@ -2,16 +2,17 @@ import queue
 import tkinter as tk
 
 
-class Window:
+class MainWindow(tk.Tk):
 
     def __init__(self, worker):
+        super().__init__()
+        self.title('Projektseminar')
+
         self.worker = worker
         self.event_queue = queue.Queue(maxsize=100)
-
-        self.root = tk.Tk()
-        self.root.title('Projektseminar')
-        self.passive_output = tk.Text()
-        self.passive_power_button = tk.Button()
+        self.passive_output = None
+        self.window_structure = Structure(self)
+        self.passive_power_button = None
 
         self.setup_layout()
 
@@ -19,7 +20,7 @@ class Window:
         # prepares window layout
 
         self.passive_output = tk.Text(
-            self.root,
+            self,
             height=24,
             width=80
         )
@@ -48,24 +49,53 @@ class Window:
 
         while self.event_queue.qsize() > 0:
             key, data = self.event_queue.get()
-            if key == "PRINT_OUTPUT_PASSIVE_DEBUG":
+            if key == "PRINT_OUTPUT_PASSIVE":
                 self.passive_output.config(state='normal')
                 self.passive_output.insert(tk.END, data)
                 self.passive_output.config(state='disabled')
                 self.passive_output.see(tk.END)
+            elif key == "PRINT_OUTPUT_STRUCTURE":
+                self.window_structure.set(data)
 
-    def print(self, string):
+    def passive_print(self, string):
         # prints to passive_output
 
-        self.event_queue.put(("PRINT_OUTPUT_PASSIVE_DEBUG", string))
-        self.root.after(0, self.refresh)
+        self.event_queue.put(("PRINT_OUTPUT_PASSIVE", string))
+        self.after(0, self.refresh)
+
+    def structure_print(self, string):
+        # prints to passive_output
+
+        self.event_queue.put(("PRINT_OUTPUT_STRUCTURE", string))
+        self.after(0, self.refresh)
 
     def open(self):
         # opens window
 
-        self.root.mainloop()
+        self.mainloop()
 
     def close(self):
-        #closes window
+        # closes window
 
-        self.root.destroy()
+        self.destroy()
+
+
+class Structure(tk.Toplevel):
+    def __init__(self, main_window):
+        super().__init__(main_window)
+        self.title('Network Structure')
+
+        self.passive_structure = tk.Text(
+            self,
+            height=24,
+            width=60
+        )
+        self.passive_structure.pack(expand=True)
+        self.passive_structure.config(state='disabled')
+
+    def set(self, string):
+        self.passive_structure.config(state='normal')
+        self.passive_structure.delete(1.0, tk.END)
+        self.passive_structure.insert(1.0, string)
+        self.passive_structure.config(state='disabled')
+        self.passive_structure.see(tk.END)

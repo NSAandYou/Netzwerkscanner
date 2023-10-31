@@ -1,7 +1,8 @@
 @startuml
 class Worker {
-    + window: Window
+    + window: MainWindow
     + network_interface: string
+    + network_structure: Structure
     + passive_scanner: pyshark.LiveCapture
     + passive_analyser: analyse.PassiveAnalyser
     + passive_working_state: bool
