@@ -6,7 +6,6 @@ from analyse import PassiveAnalyser
 from analyse.network import Structure
 from gui import MainWindow
 
-
 class Worker:
     def __init__(self, network_interface):
         self.window = MainWindow(self)
@@ -14,8 +13,9 @@ class Worker:
         self.network_interface = network_interface
         self.network_structure = Structure()
 
-        self.passive_scanner = pyshark.LiveCapture(interface=network_interface) ##TODO UnknownInterfaceException
-        self.passive_analyser = PassiveAnalyser(self.network_structure, self.window.passive_print, self.window.structure_print)
+        self.passive_scanner = pyshark.LiveCapture(interface=network_interface)
+        self.passive_analyser = PassiveAnalyser(self.network_structure, self.window.passive_print,
+                                                self.window.structure_print)
         self.passive_working_state = False
 
     def start(self):
@@ -49,6 +49,6 @@ class Worker:
         # function for passive scan loop
 
         for packet in self.passive_scanner.sniff_continuously():
-            if not self.passive_working_state:
+            if not self.passive_working_state:  # TODO can throw exception if button pressed to fast
                 break
             self.passive_analyser.analyse_package(packet)

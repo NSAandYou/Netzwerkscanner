@@ -1,6 +1,9 @@
 import queue
 import tkinter as tk
 
+from gui.network_structure import NetworkStructure
+from gui.passive_output import PassiveOutput
+
 
 class MainWindow(tk.Tk):
 
@@ -9,26 +12,41 @@ class MainWindow(tk.Tk):
         self.title('Projektseminar')
 
         self.worker = worker
-        self.event_queue = queue.Queue(maxsize=100)
+        self.event_queue: queue.Queue = queue.Queue(maxsize=100)
         self.passive_output = None
-        self.window_structure = Structure(self)
+        self.window_network_structure = None
+        self.window_passive_output = None
+
+        self.status_text = None
         self.passive_power_button = None
+        self.open_window_network_structure_button = None
+        self.open_window_passive_output_button = None
 
         self.setup_layout()
 
     def setup_layout(self):
         # prepares window layout
 
-        self.passive_output = tk.Text(
+        self.status_text = tk.Text(
             self,
-            height=24,
-            width=80
+            height=18,
+            width=40
         )
-        self.passive_output.pack(expand=True)
-        self.passive_output.config(state='disabled')
+        self.status_text.pack(expand=True)
+        self.status_text.config(state='disabled')
+        self.start_loops(1000)
 
-        self.passive_power_button = tk.Button(text="Start passive Scan", command=self.passive_power_button_pressed)
+        self.passive_power_button: tk.Button = tk.Button(text="Start passive Scan",
+                                                         command=self.passive_power_button_pressed)
         self.passive_power_button.pack()
+
+        self.open_window_network_structure_button: tk.Button = tk.Button(text="Network Structure",
+                                                                         command=self.open_window_network_structure)
+        self.open_window_network_structure_button.pack()
+
+        self.open_window_passive_output_button: tk.Button = tk.Button(text="Passive Scan Output",
+                                                                      command=self.open_window_passive_output)
+        self.open_window_passive_output_button.pack()
 
     def passive_power_button_pressed(self):
         # action when passive scan button is pressed
@@ -50,52 +68,62 @@ class MainWindow(tk.Tk):
         while self.event_queue.qsize() > 0:
             key, data = self.event_queue.get()
             if key == "PRINT_OUTPUT_PASSIVE":
-                self.passive_output.config(state='normal')
-                self.passive_output.insert(tk.END, data)
-                self.passive_output.config(state='disabled')
-                self.passive_output.see(tk.END)
+                self.window_passive_output.insert(data)
             elif key == "PRINT_OUTPUT_STRUCTURE":
-                self.window_structure.set(data)
+                self.window_network_structure.set(data)
 
     def passive_print(self, string):
         # prints to passive_output
-
-        self.event_queue.put(("PRINT_OUTPUT_PASSIVE", string))
-        self.after(0, self.refresh)
+        if self.window_passive_output is not None and self.window_passive_output.winfo_exists():
+            self.event_queue.put(("PRINT_OUTPUT_PASSIVE", string))
+            self.after(0, self.refresh)
 
     def structure_print(self, string):
         # prints to passive_output
+        if self.window_network_structure is not None and self.window_network_structure.winfo_exists():
+            self.event_queue.put(("PRINT_OUTPUT_STRUCTURE", string))
+            self.after(0, self.refresh)
 
-        self.event_queue.put(("PRINT_OUTPUT_STRUCTURE", string))
-        self.after(0, self.refresh)
+    def refresh_status_text(self):
+        text: str = ''
+        if self.worker.passive_working_state:
+            text += 'Passive Output: Active'
+        else:
+            text += 'Passive Output: Inactive'
+
+        self.status_text.config(state='normal')
+        self.status_text.delete(1.0, tk.END)
+        self.status_text.insert(
+            1.0,
+            text
+        )
+        self.status_text.config(state='disabled')
+
+    def loop_refresh_status_text(self):
+        self.refresh_status_text()
+        self.after(1000, self.loop_refresh_status_text)
+
+    def start_loops(self, time):
+        self.after(time, self.loop_refresh_status_text)
 
     def open(self):
         # opens window
 
         self.mainloop()
 
+    def open_window_passive_output(self):
+        if self.window_passive_output is not None and self.window_passive_output.winfo_exists():
+            self.window_passive_output.lift()
+        else:
+            self.window_passive_output = PassiveOutput(self)
+
+    def open_window_network_structure(self):
+        if self.window_network_structure is not None and self.window_network_structure.winfo_exists():
+            self.window_network_structure.lift()
+        else:
+            self.window_network_structure = NetworkStructure(self)
+
     def close(self):
         # closes window
 
         self.destroy()
-
-
-class Structure(tk.Toplevel):
-    def __init__(self, main_window):
-        super().__init__(main_window)
-        self.title('Network Structure')
-
-        self.passive_structure = tk.Text(
-            self,
-            height=24,
-            width=60
-        )
-        self.passive_structure.pack(expand=True)
-        self.passive_structure.config(state='disabled')
-
-    def set(self, string):
-        self.passive_structure.config(state='normal')
-        self.passive_structure.delete(1.0, tk.END)
-        self.passive_structure.insert(1.0, string)
-        self.passive_structure.config(state='disabled')
-        self.passive_structure.see(tk.END)

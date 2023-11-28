@@ -1,4 +1,8 @@
 import sys
+
+import pyshark
+from pyshark.capture.live_capture import UnknownInterfaceException
+
 from worker import Worker
 
 
@@ -24,6 +28,9 @@ def run(arguments):
 
     if network_interface is None:
         network_interface = input("Whats the interface name? ")
+
+    ## TODO if network_interface not in pyshark.LiveCapture.list_interfaces():
+    ##    return None
 
     return Worker(network_interface)
 

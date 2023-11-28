@@ -1,8 +1,8 @@
 class Device:
     def __init__(self, mac_addr):
-        self._mac_addr = mac_addr.lower()
-        self.pkg_recv = 0
-        self.pkg_send = 0
+        self._mac_addr: str = mac_addr.lower()
+        self.pkg_recv: int = 0
+        self.pkg_send: int = 0
 
     def get_mac_addr(self) -> str:
         return self._mac_addr
@@ -54,4 +54,5 @@ class Structure:
             self.devices.get(src_addr).increase_pkg_send()
 
     def tostring(self):
-        return '\n'.join(device.tostring() for device in self.devices.values())
+        return ('MAC-Address          Send  Recv  Sum\n' +
+                '\n'.join(device.tostring() for device in self.devices.values()))
