@@ -1,8 +1,5 @@
 import sys
 
-import pyshark
-from pyshark.capture.live_capture import UnknownInterfaceException
-
 from worker import Worker
 
 

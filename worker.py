@@ -1,12 +1,13 @@
-import threading
+import tkinter as tk
 
 import pyshark
 
 from structure import *
-import tkinter as tk
 
 
 class Worker(tk.Tk):
+    REFRESH_LOOP_TIME = 1000
+
     def __init__(self, network_interface):
         super().__init__()
         self.title('Projektseminar')
@@ -24,16 +25,7 @@ class Worker(tk.Tk):
         self.columnconfigure(4, weight=1)
         self.columnconfigure(5, weight=1)
 
-
-        ##self.network_structure_listbox = tk.Listbox(
-        ##    self,
-        ##    height=6,
-        ##    width=24,
-        ##    listvariable=tk.Variable(value=("1", "2")),
-        ##)
-        ##self.network_structure_listbox.pack(side="left", fill="both", expand=True)
-
-        self.start_refresh_loop(1000)
+        self.start_refresh_loop(Worker.REFRESH_LOOP_TIME)
 
     def refresh(self):
         """
@@ -64,7 +56,7 @@ class Worker(tk.Tk):
             tk.Label(self, text=device.get_os_cpe()).grid(row=row, column=6)
             row += 1
 
-        self.after(1000, self.refresh)
+        self.after(Worker.REFRESH_LOOP_TIME, self.refresh)
 
     def start_refresh_loop(self, time):
         self.after(time, self.refresh)
@@ -106,13 +98,6 @@ class Worker(tk.Tk):
         # function for passive scan loop
 
         for packet in self.passive_scanner.sniff_continuously():
-            if not self.passive_thread_working_state:  # TODO can throw exception if button pressed to fast
+            if not self.passive_thread_working_state:
                 break
             self.network_structure.analyse_pkg(packet)
-
-
-
-    ##if 'wlan' in packet and 'wpa' in packet.wlan:     TODO
-    ##    decrypted_packet = packet.wlan.wpa.decrypt('<your_wpa2_pre-shared_key>')
-
-    ##    print(decrypted_packet)

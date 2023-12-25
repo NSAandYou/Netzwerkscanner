@@ -20,8 +20,6 @@ class Device:
                 pass
                 ##print(f"WARNING: Device({self._mac_addr}) now sends with ip {ip} instead of {self.ip_addr}(old): Could "
                 ##      "be ARP problem")   TODO
-            else:
-                self.scan_on_thread()
             self.ip_addr = str(ip)
 
     def increase_pkg_recv(self):
@@ -93,6 +91,14 @@ class Structure:
                 self.devices.get(src_addr).increase_pkg_send()
                 new_devices.append(src_addr)
 
+        if hasattr(pkg, 'arp'):
+            if pkg.arp.opcode == '1':
+                self.devices.get(pkg.arp.src_hw_mac).set_check_ip(pkg.arp.src_proto_ipv4)
+            elif pkg.arp.opcode == '2':
+                self.devices.get(pkg.arp.src_hw_mac).set_check_ip(pkg.arp.src_proto_ipv4)
+                self.devices.get(pkg.arp.dst_hw_mac).set_check_ip(pkg.arp.dst_proto_ipv4)
+            else:
+                return
         if hasattr(pkg, 'ip'):
             self.devices.get(dst_addr).set_check_ip(pkg.ip.addr)
 
@@ -101,7 +107,3 @@ class Structure:
 
     def get_device_by_mac(self, mac_addr: str) -> Device:
         return self.devices.get(mac_addr)
-
-    ##def tostring(self):
-    ##    return ('MAC-Address          Send  Recv  Sum\n' +
-    ##            '\n'.join(device.tostring() for device in self.devices.values()))
