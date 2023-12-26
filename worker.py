@@ -2,6 +2,7 @@ import tkinter as tk
 
 import pyshark
 
+import smart_classifier
 from structure import *
 
 
@@ -15,7 +16,9 @@ class Worker(tk.Tk):
         self.network_interface = network_interface
         self.network_structure = Structure()
 
-        self.passive_scanner = pyshark.LiveCapture(interface=network_interface)
+        smart_classifier.__init__()
+
+        self.passive_scanner = pyshark.LiveCapture(interface=network_interface, include_raw=True, use_json=True)
         self.passive_thread_working_state = False
 
         self.columnconfigure(0, weight=1)
@@ -39,21 +42,19 @@ class Worker(tk.Tk):
 
         tk.Label(self, text='MAC-Address').grid(row=0, column=0)
         tk.Label(self, text='IP-Address').grid(row=0, column=1)
-        tk.Label(self, text='Send').grid(row=0, column=2)
-        tk.Label(self, text='Recv').grid(row=0, column=3)
-        tk.Label(self, text='Sum').grid(row=0, column=4)
-        tk.Label(self, text='Scan device').grid(row=0, column=5)
-        tk.Label(self, text='OS CPE').grid(row=0, column=6)
+        tk.Label(self, text='Packets').grid(row=0, column=2)
+        tk.Label(self, text='OS CPE Passive').grid(row=0, column=3)
+        tk.Label(self, text='Scan device').grid(row=0, column=4)
+        tk.Label(self, text='OS CPE Active').grid(row=0, column=5)
 
         row = 1
         for device in self.network_structure.devices.values():
             tk.Label(self, text=device.get_mac_addr()).grid(row=row, column=0)
             tk.Label(self, text=device.ip_addr).grid(row=row, column=1)
-            tk.Label(self, text=device.pkg_send).grid(row=row, column=2)
-            tk.Label(self, text=device.pkg_recv).grid(row=row, column=3)
-            tk.Label(self, text=device.get_pkg_processed()).grid(row=row, column=4)
-            tk.Button(self, text="Scan", command=device.scan_on_thread).grid(row=row, column=5)
-            tk.Label(self, text=device.get_os_cpe()).grid(row=row, column=6)
+            tk.Label(self, text=device.pkt_send).grid(row=row, column=2)
+            tk.Label(self, text=device.get_os_cpe_passive()).grid(row=row, column=3)
+            tk.Button(self, text="Scan", command=device.scan_on_thread).grid(row=row, column=4)
+            tk.Label(self, text=device.get_os_cpe_active()).grid(row=row, column=5)
             row += 1
 
         self.after(Worker.REFRESH_LOOP_TIME, self.refresh)
@@ -97,7 +98,7 @@ class Worker(tk.Tk):
     def passive_worker(self):
         # function for passive scan loop
 
-        for packet in self.passive_scanner.sniff_continuously():
+        for pkt in self.passive_scanner.sniff_continuously():
             if not self.passive_thread_working_state:
                 break
-            self.network_structure.analyse_pkg(packet)
+            self.network_structure.analyse_pkt(pkt)
