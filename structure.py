@@ -47,6 +47,9 @@ class Device:
     def get_os_cpe_passive(self):
         return max(self.os_cpe_list_passive, key=self.os_cpe_list_passive.count)
 
+    def get_os_cpe_passive_accuracy(self):
+        return self.os_cpe_list_passive.count(self.get_os_cpe_passive())/len(self.os_cpe_list_passive)
+
     def smart_analyse(self, pkt):
         self.os_cpe_list_passive.append(smart_classifier.predict(pkt))
         if len(self.os_cpe_list_passive) > 20:

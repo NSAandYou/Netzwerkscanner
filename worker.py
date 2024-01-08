@@ -44,8 +44,9 @@ class Worker(tk.Tk):
         tk.Label(self, text='IP-Address').grid(row=0, column=1)
         tk.Label(self, text='Packets').grid(row=0, column=2)
         tk.Label(self, text='OS CPE Passive').grid(row=0, column=3)
-        tk.Label(self, text='Scan device').grid(row=0, column=4)
-        tk.Label(self, text='OS CPE Active').grid(row=0, column=5)
+        tk.Label(self, text='Sicherheit').grid(row=0, column=4)
+        tk.Label(self, text='Scan device').grid(row=0, column=5)
+        tk.Label(self, text='OS CPE Active').grid(row=0, column=6)
 
         row = 1
         for device in self.network_structure.devices.values():
@@ -53,8 +54,9 @@ class Worker(tk.Tk):
             tk.Label(self, text=device.ip_addr).grid(row=row, column=1)
             tk.Label(self, text=device.pkt_send).grid(row=row, column=2)
             tk.Label(self, text=device.get_os_cpe_passive()).grid(row=row, column=3)
-            tk.Button(self, text="Scan", command=device.scan_on_thread).grid(row=row, column=4)
-            tk.Label(self, text=device.get_os_cpe_active()).grid(row=row, column=5)
+            tk.Label(self, text=f"{int(device.get_os_cpe_passive_accuracy()*100)}%").grid(row=row, column=4)
+            tk.Button(self, text="Scan", command=device.scan_on_thread).grid(row=row, column=5)
+            tk.Label(self, text=device.get_os_cpe_active()).grid(row=row, column=6)
             row += 1
 
         self.after(Worker.REFRESH_LOOP_TIME, self.refresh)
