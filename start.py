@@ -5,6 +5,7 @@ from worker import Worker
 
 def run(arguments):
     network_interface = None
+    clf_file_path = None
 
     for index in range(1, len(arguments)):
         try:
@@ -14,6 +15,8 @@ def run(arguments):
                 elif arguments[index] == '-h':
                     print_help()
                     return None
+                elif arguments[index] == '-c':
+                    clf_file_path = arguments[index + 1]
                 else:
                     print("ERROR! Couldn't understand parameter " + arguments[index])
                     print_help()
@@ -25,11 +28,13 @@ def run(arguments):
 
     if network_interface is None:
         network_interface = input("Whats the interface name? ")
+    if clf_file_path is None:
+        clf_file_path = input("Whats the path of the Passive Scan Classifier? ")
 
     ## TODO if network_interface not in pyshark.LiveCapture.list_interfaces():
     ##    return None
 
-    return Worker(network_interface)
+    return Worker(network_interface, clf_file_path)
 
 
 def print_help():

@@ -7,16 +7,16 @@ from structure import *
 
 
 class Worker(tk.Tk):
-    REFRESH_LOOP_TIME = 1000
+    REFRESH_LOOP_TIME = 5000
 
-    def __init__(self, network_interface):
+    def __init__(self, network_interface, clf_file_path):
         super().__init__()
         self.title('Projektseminar')
 
         self.network_interface = network_interface
         self.network_structure = Structure()
 
-        smart_classifier.__init__()
+        smart_classifier.__init__(clf_file_path)
 
         self.passive_scanner = pyshark.LiveCapture(interface=network_interface, include_raw=True, use_json=True)
         self.passive_thread_working_state = False
