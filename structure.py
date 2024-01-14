@@ -3,6 +3,10 @@ import threading
 import nmap
 
 import smart_classifier
+import webbrowser
+
+CVE_SEARCH_LIST = ("https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&isCpeNameSearch"
+                   "=true&seach_type=all&query=")
 
 
 class Device:
@@ -27,8 +31,9 @@ class Device:
         self.pkt_send += 1
 
     def scan(self):
-        nm = nmap.PortScanner()
-        if self.ip_addr != "UNKNOWN" and self._mac_addr != "ff:ff:ff:ff:ff:ff":
+        # noinspection PyBroadException
+        try:
+            nm = nmap.PortScanner()
             print(f"INFO: Start Scan for {self.ip_addr}({self._mac_addr})")
             scan = nm.scan(self.ip_addr, arguments='-O')
             ip = list(scan['scan'].keys())[0]
@@ -37,9 +42,21 @@ class Device:
                 if 'cpe' in scan['scan'][ip]['osmatch'][0]['osclass'][0]:
                     self.os_cpe_active = scan['scan'][ip]['osmatch'][0]['osclass'][0]['cpe'][0]
             print(f"INFO: Stop Scan for {self.ip_addr}({self._mac_addr})")
+        except nmap.nmap.PortScannerError:
+            self.os_cpe_active = "NO ROOT PRIV"
+        except:
+            self.os_cpe_active = "ERROR"
 
     def scan_on_thread(self):
-        threading.Thread(target=self.scan).start()
+        if self.os_cpe_active != "SCANNING" and self.ip_addr != "UNKNOWN" and self._mac_addr != "ff:ff:ff:ff:ff:ff":
+            self.os_cpe_active = "SCANNING"
+            threading.Thread(target=self.scan).start()
+
+    def view_cve(self):
+        if "cpe" in self.get_os_cpe_active():
+            webbrowser.open(CVE_SEARCH_LIST + self.get_os_cpe_active())
+        else:
+            webbrowser.open(CVE_SEARCH_LIST + self.get_os_cpe_passive())
 
     def get_os_cpe_active(self):
         return self.os_cpe_active
@@ -47,8 +64,11 @@ class Device:
     def get_os_cpe_passive(self):
         return max(self.os_cpe_list_passive, key=self.os_cpe_list_passive.count)
 
-    def get_os_cpe_passive_accuracy(self):
-        return self.os_cpe_list_passive.count(self.get_os_cpe_passive())/len(self.os_cpe_list_passive)
+    def get_os_cpe_passive_confidence(self):
+        confidence = self.os_cpe_list_passive.count(self.get_os_cpe_passive()) / len(self.os_cpe_list_passive)
+        if confidence < 0.5 and self.os_cpe_active == "SCAN MISSING":
+            self.scan_on_thread()
+        return confidence
 
     def smart_analyse(self, pkt):
         self.os_cpe_list_passive.append(smart_classifier.predict(pkt))

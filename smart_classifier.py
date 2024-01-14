@@ -1,10 +1,7 @@
 import pickle
-from sklearn.tree import DecisionTreeClassifier
 import numpy as np
 
 MAX_FEATURE_COLUMNS = 600
-
-clf: DecisionTreeClassifier
 
 
 def __init__(clf_file_path: str):

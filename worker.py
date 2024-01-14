@@ -50,8 +50,8 @@ class Worker(tk.Tk):
                 self.displayed_devices[index][3].config(text=device.pkt_send)
             if self.displayed_devices[index][4]['text'] != device.get_os_cpe_passive():
                 self.displayed_devices[index][4].config(text=device.get_os_cpe_passive())
-            if self.displayed_devices[index][5]['text'] != f"{int(device.get_os_cpe_passive_accuracy()*100)}%":
-                self.displayed_devices[index][5].config(text=f"{int(device.get_os_cpe_passive_accuracy()*100)}%")
+            if self.displayed_devices[index][5]['text'] != f"{int(device.get_os_cpe_passive_confidence() * 100)}%":
+                self.displayed_devices[index][5].config(text=f"{int(device.get_os_cpe_passive_confidence() * 100)}%")
             if self.displayed_devices[index][7]['text'] != device.get_os_cpe_active():
                 self.displayed_devices[index][7].config(text=device.get_os_cpe_active())
 
@@ -69,9 +69,10 @@ class Worker(tk.Tk):
             tk.Label(self, text=device.ip_addr),
             tk.Label(self, text=device.pkt_send),
             tk.Label(self, text=device.get_os_cpe_passive),
-            tk.Label(self, text=device.get_os_cpe_passive_accuracy()),
+            tk.Label(self, text=device.get_os_cpe_passive_confidence()),
             tk.Button(self, text="Scan", command=device.scan_on_thread),
             tk.Label(self, text=device.get_os_cpe_active()),
+            tk.Button(self, text="View", command=device.view_cve),
         ]
 
         display_device[1].grid(row=row, column=0)
@@ -81,6 +82,7 @@ class Worker(tk.Tk):
         display_device[5].grid(row=row, column=4)
         display_device[6].grid(row=row, column=5)
         display_device[7].grid(row=row, column=6)
+        display_device[8].grid(row=row, column=7)
 
         self.displayed_devices.append(display_device)
 
@@ -93,9 +95,10 @@ class Worker(tk.Tk):
             tk.Label(self, text='IP-Address'),
             tk.Label(self, text='Packets'),
             tk.Label(self, text='OS CPE Passive'),
-            tk.Label(self, text='Sicherheit'),
+            tk.Label(self, text='Confidence'),
             tk.Label(self, text='Scan device'),
             tk.Label(self, text='OS CPE Active'),
+            tk.Label(self, text='Check CVE'),
         ]
 
         display_device[1].grid(row=0, column=0)
@@ -105,6 +108,7 @@ class Worker(tk.Tk):
         display_device[5].grid(row=0, column=4)
         display_device[6].grid(row=0, column=5)
         display_device[7].grid(row=0, column=6)
+        display_device[8].grid(row=0, column=7)
 
         self.displayed_devices.append(display_device)
 
