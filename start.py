@@ -1,5 +1,6 @@
 import sys
 
+import structure
 from worker import Worker
 
 
@@ -15,6 +16,8 @@ def run(arguments):
                 elif arguments[index] == '-h':
                     print_help()
                     return None
+                elif arguments[index] == '-p':
+                    structure.PASSIVE_ONLY = True
                 elif arguments[index] == '-c':
                     clf_file_path = arguments[index + 1]
                 else:
@@ -40,6 +43,8 @@ def run(arguments):
 def print_help():
     print("""Welcome to this help dialog! Please use it as follows:
     -i NETWORK_INTERFACE, set the network interface witch should be used for passive scans
+    -c CLASSIFIER, set the path to the classifier used for the passive analyser
+    -p PASSIVE ONLY, turn of active scans to stay invisible
     -h, prints this help dialog""")
 
 

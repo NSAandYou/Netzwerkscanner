@@ -8,6 +8,8 @@ import webbrowser
 CVE_SEARCH_LIST = ("https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&isCpeNameSearch"
                    "=true&seach_type=all&query=")
 
+PASSIVE_ONLY = False
+
 
 class Device:
     def __init__(self, mac_addr):
@@ -21,7 +23,7 @@ class Device:
         return self._mac_addr
 
     def set_ip(self, ip: str):
-        if self.ip_addr != ip:
+        if self.ip_addr != ip and ip != "0.0.0.0":
             if self.ip_addr != "UNKNOWN":
                 print(f"WARNING: Device({self._mac_addr}) now sends with ip {ip} instead of {self.ip_addr}(old): Could "
                       "be ARP problem")
@@ -48,9 +50,11 @@ class Device:
             self.os_cpe_active = "ERROR"
 
     def scan_on_thread(self):
-        if self.os_cpe_active != "SCANNING" and self.ip_addr != "UNKNOWN" and self._mac_addr != "ff:ff:ff:ff:ff:ff":
-            self.os_cpe_active = "SCANNING"
-            threading.Thread(target=self.scan).start()
+        if not PASSIVE_ONLY:
+            if self.os_cpe_active != "SCANNING" and self.ip_addr != "UNKNOWN" and self._mac_addr != "ff:ff:ff:ff:ff:ff":
+                self.os_cpe_active = "SCANNING"
+                threading.Thread(target=self.scan).start()
+        self.os_cpe_active = "ACTIVE OFF"
 
     def view_cve(self):
         if "cpe" in self.get_os_cpe_active():
