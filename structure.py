@@ -46,15 +46,24 @@ class Device:
             print(f"INFO: Stop Scan for {self.ip_addr}({self._mac_addr})")
         except nmap.nmap.PortScannerError:
             self.os_cpe_active = "NO ROOT PRIV"
+            print(f"INFO: Error Scanning {self.ip_addr}({self._mac_addr}): Need root privileges")
         except:
             self.os_cpe_active = "ERROR"
+            print(f"INFO: Error Scanning {self.ip_addr}({self._mac_addr}): Unknown")
 
     def scan_on_thread(self):
         if not PASSIVE_ONLY:
-            if self.os_cpe_active != "SCANNING" and self.ip_addr != "UNKNOWN" and self._mac_addr != "ff:ff:ff:ff:ff:ff":
-                self.os_cpe_active = "SCANNING"
-                threading.Thread(target=self.scan).start()
-        self.os_cpe_active = "ACTIVE OFF"
+            if self.ip_addr != "UNKNOWN":
+                if self._mac_addr != "ff:ff:ff:ff:ff:ff":
+                    if self.os_cpe_active != "SCANNING":
+                        self.os_cpe_active = "SCANNING"
+                        threading.Thread(target=self.scan).start()
+                else:
+                    print(f"INFO: Bad Mac-Address for scanning")
+            else:
+                print(f"INFO: IP-Address unknown for {self._mac_addr}")
+        else:
+            self.os_cpe_active = "ACTIVE OFF"
 
     def view_cve(self):
         if "cpe" in self.get_os_cpe_active():

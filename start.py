@@ -30,12 +30,9 @@ def run(arguments):
             return None
 
     if network_interface is None:
-        network_interface = input("Whats the interface name? ")
+        network_interface = input("Whats the name of the network interface? ")
     if clf_file_path is None:
         clf_file_path = input("Whats the path of the Passive Scan Classifier? ")
-
-    ## TODO if network_interface not in pyshark.LiveCapture.list_interfaces():
-    ##    return None
 
     return Worker(network_interface, clf_file_path)
 
