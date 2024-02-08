@@ -1,9 +1,9 @@
 import threading
+import webbrowser
 
 import nmap
 
 import smart_classifier
-import webbrowser
 
 CVE_SEARCH_LIST = ("https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&isCpeNameSearch"
                    "=true&seach_type=all&query=")

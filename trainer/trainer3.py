@@ -6,19 +6,20 @@ Created on Tue Jan  2 19:35:22 2024
 @author: kilian
 """
 
-from scapy.all import rdpcap
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn import metrics
-import numpy as np
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.over_sampling import RandomOverSampler
-import pickle
-import time
 import csv
 import io
-from sklearn.neural_network import MLPClassifier
+import pickle
+import time
+
+import numpy as np
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
+from scapy.all import rdpcap
+from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 premade_mac_cpe_map = {}
 

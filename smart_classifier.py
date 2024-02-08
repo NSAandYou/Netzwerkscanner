@@ -1,4 +1,5 @@
 import pickle
+
 import numpy as np
 
 MAX_FEATURE_COLUMNS = 600
