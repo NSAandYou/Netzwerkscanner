@@ -39,9 +39,9 @@ def run(arguments):
 
 def print_help():
     print("""Welcome to this help dialog! Please use it as follows:
-    -i NETWORK_INTERFACE, set the network interface witch should be used for passive scans
+    -i NETWORK_INTERFACE, set the network interface which should be used for passive scans
     -c CLASSIFIER, set the path to the classifier used for the passive analyser
-    -p PASSIVE ONLY, turn of active scans to stay invisible
+    -p PASSIVE ONLY, turn off active scans to stay invisible
     -h, prints this help dialog""")
 
 
